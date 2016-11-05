@@ -38,82 +38,87 @@
   </section>
 
   <section class="article-entry">
-    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>现在iOS开发已经是arc甚至是swift的时代，但是内存管理仍是一个重点关注的问题，如果只知盲目开发而不知个中原理，踩坑就跳不出来了，理解好内存管理，能让我们写出更有质量的代码。</p>
+    <h3>前言</h3>
+<p>现在iOS开发已经是arc甚至是swift的时代，但是内存管理仍是一个重点关注的问题，如果只知盲目开发而不知个中原理，踩坑就跳不出来了，理解好内存管理，能让我们写出更有质量的代码。</p>
 <p>内存管理是程序设计中很重要的一部分，程序在运行的过程中消耗内存，运行结束后释放占用的内存。如果程序运行时一直分配内存而不及时释放无用的内存，会造成这样的后果：程序占用的内存越来越大，直至内存消耗殚尽，程序因无内存可用导致崩溃，这样的情况我们称之为内存泄漏。</p>
 <p>ObjC的内存管理比较简洁，然而要深刻理解也不是一件易事，本文将介绍如何使用ObjC进行内存管理。</p>
-<a id="more"></a>
-<h3 id="1-引用计数"><a href="#1-引用计数" class="headerlink" title="1 引用计数"></a>1 引用计数</h3><h6 id="在ObjC中，对象什么时候会被释放（或者对象占用的内存什么时候会被回收利用）？"><a href="#在ObjC中，对象什么时候会被释放（或者对象占用的内存什么时候会被回收利用）？" class="headerlink" title="在ObjC中，对象什么时候会被释放（或者对象占用的内存什么时候会被回收利用）？"></a>在ObjC中，对象什么时候会被释放（或者对象占用的内存什么时候会被回收利用）？</h6><p>答案是：当对象没有被任何变量引用（也可以说是没有指针指向该对象）的时候，就会被释放。</p>
-<h6 id="那怎么知道对象已经没有被引用了呢？"><a href="#那怎么知道对象已经没有被引用了呢？" class="headerlink" title="那怎么知道对象已经没有被引用了呢？"></a>那怎么知道对象已经没有被引用了呢？</h6><p>ObjC采用引用计数（reference counting）的技术来进行管理：<br>1）每个对象都有一个关联的整数，称为引用计数器<br>2）当代码需要使用该对象时，则将对象的引用计数加1<br>3）当代码结束使用该对象时，则将对象的引用计数减1<br>4）当引用计数的值变为0时，表示对象没有被任何代码使用，此时对象将被释放。</p>
-<h6 id="与之对应的消息发送方法如下："><a href="#与之对应的消息发送方法如下：" class="headerlink" title="与之对应的消息发送方法如下："></a>与之对应的消息发送方法如下：</h6><p>1）当对象被创建（通过alloc、new或copy等方法）时，其引用计数初始值为1<br>2）給对象发送retain消息，其引用计数加1<br>3）給对象发送release消息，其引用计数减1<br>4）当对象引用计数归0时，ObjC給对象发送dealloc消息销毁对象</p>
-<h6 id="下面通过一个简单的例子来说明："><a href="#下面通过一个简单的例子来说明：" class="headerlink" title="下面通过一个简单的例子来说明："></a>下面通过一个简单的例子来说明：</h6><p>场景：有一个宠物中心（内存），可以派出小动物（对象）陪小朋友们玩耍（对象引用者），现在xiaoming想和小狗一起玩耍。<br>新建Dog类，重写其创建和销毁的方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@implementation Dog</div><div class="line">    </div><div class="line">- (instancetype)init &#123;</div><div class="line">    if (self = [super init]) &#123;</div><div class="line">        NSLog(@&quot;小狗被派出去啦！初始引用计数为 %ld&quot;,self.retainCount);</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line">    </div><div class="line">- (void)dealloc &#123;</div><div class="line">    NSLog(@&quot;小狗回到宠物中心&quot;);</div><div class="line">    [super dealloc];</div><div class="line">&#125;</div><div class="line">    </div><div class="line">@end</div></pre></td></tr></table></figure>
+<p>&lt;!-- more --&gt;</p>
+<h3>1 引用计数</h3>
+<h6>在ObjC中，对象什么时候会被释放（或者对象占用的内存什么时候会被回收利用）？</h6>
+<p>答案是：当对象没有被任何变量引用（也可以说是没有指针指向该对象）的时候，就会被释放。</p>
+<h6>那怎么知道对象已经没有被引用了呢？</h6>
+<p>ObjC采用引用计数（reference counting）的技术来进行管理：<br>
+1）每个对象都有一个关联的整数，称为引用计数器<br>
+2）当代码需要使用该对象时，则将对象的引用计数加1<br>
+3）当代码结束使用该对象时，则将对象的引用计数减1<br>
+4）当引用计数的值变为0时，表示对象没有被任何代码使用，此时对象将被释放。</p>
+<h6>与之对应的消息发送方法如下：</h6>
+<p>1）当对象被创建（通过alloc、new或copy等方法）时，其引用计数初始值为1<br>
+2）給对象发送retain消息，其引用计数加1<br>
+3）給对象发送release消息，其引用计数减1<br>
+4）当对象引用计数归0时，ObjC給对象发送dealloc消息销毁对象</p>
+<h6>下面通过一个简单的例子来说明：</h6>
+<p>场景：有一个宠物中心（内存），可以派出小动物（对象）陪小朋友们玩耍（对象引用者），现在xiaoming想和小狗一起玩耍。<br>
+新建Dog类，重写其创建和销毁的方法</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">@implementation Dog</div><div class="line">    </div><div class="line">- (instancetype)init &#123;</div><div class="line">    if (self = [super init]) &#123;</div><div class="line">        NSLog(@&quot;小狗被派出去啦！初始引用计数为 %ld&quot;,self.retainCount);</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line">    </div><div class="line">- (void)dealloc &#123;</div><div class="line">    NSLog(@&quot;小狗回到宠物中心&quot;);</div><div class="line">    [super dealloc];</div><div class="line">&#125;</div><div class="line">    </div><div class="line">@end</div></pre></td></tr></table></figure></p>
 <p>在main方法中创建dog对象，給dog发送消息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//模拟：宠物中心派出小狗</div><div class="line">Dog * dog = [[Dog alloc]init];</div><div class="line">    </div><div class="line">//模拟：xiaoming需要和小狗玩耍，需要将其引用计数加1</div><div class="line">[dog retain];</div><div class="line">NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);</div><div class="line">    </div><div class="line">//模拟：xiaoming不和小狗玩耍了，需要将其引用计数减1</div><div class="line">[dog release];</div><div class="line">NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);</div><div class="line">    </div><div class="line">//没人需要和小狗玩耍了，将其引用计数减1</div><div class="line">[dog release];</div><div class="line">    </div><div class="line">//将指针置nil，否则变为野指针</div><div class="line">dog = nil;</div></pre></td></tr></table></figure>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//模拟：宠物中心派出小狗</div><div class="line">Dog * dog = [[Dog alloc]init];</div><div class="line">    </div><div class="line">//模拟：xiaoming需要和小狗玩耍，需要将其引用计数加1</div><div class="line">[dog retain];</div><div class="line">NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);</div><div class="line">    </div><div class="line">//模拟：xiaoming不和小狗玩耍了，需要将其引用计数减1</div><div class="line">[dog release];</div><div class="line">NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);</div><div class="line">    </div><div class="line">//没人需要和小狗玩耍了，将其引用计数减1</div><div class="line">[dog release];</div><div class="line">    </div><div class="line">//将指针置nil，否则变为野指针</div><div class="line">dog = nil;</div></pre></td></tr></table></figure></p>
 <p>输出结果为</p>
-<pre><code>[34691:7638855] 初始引用计数为 1
-[34691:7638855] 小狗的引用计数为 2
-[34691:7638855] 小狗的引用计数为 1
-[34691:7638855] 销毁Dog
-</code></pre><p>可以看到，引用计数帮助宠物中心很好的标记了小狗的使用状态，在完成任务的时候及时收回到宠物中心。</p>
-<h6 id="思考几个问题："><a href="#思考几个问题：" class="headerlink" title="思考几个问题："></a>思考几个问题：</h6><p>1）NSString引用计数问题<br>如果我们尝试查看一个string的引用计数</p>
+<pre><code>    [34691:7638855] 初始引用计数为 1
+    [34691:7638855] 小狗的引用计数为 2
+    [34691:7638855] 小狗的引用计数为 1
+    [34691:7638855] 销毁Dog
+</code></pre>
+<p>可以看到，引用计数帮助宠物中心很好的标记了小狗的使用状态，在完成任务的时候及时收回到宠物中心。</p>
+<h6>思考几个问题：</h6>
+<p>1）NSString引用计数问题<br>
+如果我们尝试查看一个string的引用计数</p>
 <pre><code>NSString * str = @&quot;hello guys&quot;;
 NSLog(@&quot;%ld&quot;, str.retainCount);
-</code></pre><p>会发现引用计数为－1，这可以理解为NSString实际上是一个字符串常量，是没有引用计数的（或者它的引用计数是一个很大的值（使用%lu可以打印查看），对它做引用计数操作没实质上的影响）。</p>
+</code></pre>
+<p>会发现引用计数为－1，这可以理解为NSString实际上是一个字符串常量，是没有引用计数的（或者它的引用计数是一个很大的值（使用%lu可以打印查看），对它做引用计数操作没实质上的影响）。</p>
 <p>2）赋值不会拥有某个对象</p>
-<pre><code>NSString * name = dog.name;
-</code></pre><p>这里仅仅是指针赋值操作，并不会增加name的引用计数，需要持有对象必须要发送retain消息。</p>
-<p>3）dealloc<br>由于释放对象是会调用dealloc方法，因此重写dealloc方法来查看对象释放的情况，如果没有调用则会造成内存泄露。在上面的例子中我们通过重写dealloc让小狗被释放的时候打印日志来告诉我们已经完成释放。</p>
+<pre><code>     NSString * name = dog.name;
+</code></pre>
+<p>这里仅仅是指针赋值操作，并不会增加name的引用计数，需要持有对象必须要发送retain消息。</p>
+<p>3）dealloc<br>
+由于释放对象是会调用dealloc方法，因此重写dealloc方法来查看对象释放的情况，如果没有调用则会造成内存泄露。在上面的例子中我们通过重写dealloc让小狗被释放的时候打印日志来告诉我们已经完成释放。</p>
 <p>4）在上面例子中，如果我们增加这样一个操作</p>
-<pre><code>//没人需要和小狗玩耍了，将其引用计数减1
-[dog release];
-NSLog(@&quot;%ld&quot;,dog.retainCount);
-</code></pre><p>会发现获取到的引用计数为1，为什么不是0呢？</p>
-<p>这是因为对引用计数为1的对象release时，系统知道该对象将被回收，就不会再对该对象的引用计数进行减1操作，这样可以增加对象回收的效率。<br>另外，对已释放的对象发送消息是不可取的，因为对象的内存已被回收，如果发送消息时，该内存已经被其他对象使用了，得到的结果是无法确定的，甚至会造成崩溃。</p>
-<h3 id="2-自动释放池"><a href="#2-自动释放池" class="headerlink" title="2 自动释放池"></a>2 自动释放池</h3><p>现在已经明确了，当不再使用一个对象时应该将其释放，但是在某些情况下，我们很难理清一个对象什么时候不再使用（比如xiaoming和小狗玩耍结束的时间不确定），这可怎么办？</p>
-<p>ObjC提供autorelease方法来解决这个问题，当給一个对象发送autorelease消息时，方法会在未来某个时间給这个对象发送release消息将其释放，在这个时间段内，对象还是可以使用的。 </p>
-<h6 id="那autorelease的原理是什么呢？"><a href="#那autorelease的原理是什么呢？" class="headerlink" title="那autorelease的原理是什么呢？"></a>那autorelease的原理是什么呢？</h6><p>原理就是对象接收到autorelease消息时，它会被添加到了当前的自动释放池中，当自动释放池被销毁时，会給池里所有的对象发送release消息。</p>
+<pre><code>     //没人需要和小狗玩耍了，将其引用计数减1
+     [dog release];
+     NSLog(@&quot;%ld&quot;,dog.retainCount);
+</code></pre>
+<p>会发现获取到的引用计数为1，为什么不是0呢？</p>
+<p>这是因为对引用计数为1的对象release时，系统知道该对象将被回收，就不会再对该对象的引用计数进行减1操作，这样可以增加对象回收的效率。<br>
+另外，对已释放的对象发送消息是不可取的，因为对象的内存已被回收，如果发送消息时，该内存已经被其他对象使用了，得到的结果是无法确定的，甚至会造成崩溃。</p>
+<h3>2 自动释放池</h3>
+<p>现在已经明确了，当不再使用一个对象时应该将其释放，但是在某些情况下，我们很难理清一个对象什么时候不再使用（比如xiaoming和小狗玩耍结束的时间不确定），这可怎么办？</p>
+<p>ObjC提供autorelease方法来解决这个问题，当給一个对象发送autorelease消息时，方法会在未来某个时间給这个对象发送release消息将其释放，在这个时间段内，对象还是可以使用的。</p>
+<h6>那autorelease的原理是什么呢？</h6>
+<p>原理就是对象接收到autorelease消息时，它会被添加到了当前的自动释放池中，当自动释放池被销毁时，会給池里所有的对象发送release消息。</p>
 <p>这里就引出了自动释放池这个概念，什么是自动释放池呢？ 顾名思义，就是一个池，这个池可以容纳对象，而且可以自动释放，这就大大增加了我们处理对象的灵活性。</p>
-<h6 id="自动释放池怎样创建？"><a href="#自动释放池怎样创建？" class="headerlink" title="自动释放池怎样创建？"></a>自动释放池怎样创建？</h6><p>ObjC提供两种方法创建自动释放池：<br>方法一：使用NSAutoreleasePool来创建</p>
-<pre><code>NSAutoreleasePool * pool = [[NSAutoreleasePool alloc]init];
-//这里写代码
-[pool release];
-</code></pre><p>方法二：使用@autoreleasepool创建</p>
-<pre><code>@autoreleasepool {
-//这里写代码
-}
-</code></pre><p>自动释放池创建后，就会成为活动的池子，释放池子后，池子将释放其所包含的所有对象。<br>以上两种方法推荐第一种，因为将内存交给ObjC管理更高效。</p>
-<h6 id="自动释放池什么时候创建？"><a href="#自动释放池什么时候创建？" class="headerlink" title="自动释放池什么时候创建？"></a>自动释放池什么时候创建？</h6><p>app使用过程中，会定期自动生成和销毁自动释放池，一般是在程序事件处理之前创建，当然我们也可以自行创建自动释放池，来达到我们一些特定的目的。</p>
-<h6 id="自动释放池什么时候销毁？"><a href="#自动释放池什么时候销毁？" class="headerlink" title="自动释放池什么时候销毁？"></a>自动释放池什么时候销毁？</h6><p>自动释放池的销毁时间是确定的，一般是在程序事件处理之后释放，或者由我们自己手动释放。</p>
-<p>下面举例说明自动释放池的工作流程：<br>场景：现在xiaoming和xiaohong都想和小狗一起玩耍，但是他们的需求不一样，他们的玩耍时间不一样，流程如下</p>
-<pre><code>//创建一个自动释放池
-NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-//模拟：宠物中心派出小狗
-Dog * dog = [[Dog alloc]init];
-
-//模拟：xiaoming需要和小狗玩耍，需要将其引用计数加1
-[dog retain];
-NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
-
-//模拟：xiaohong需要和小狗玩耍，需要将其引用计数加1
-[dog retain];
-NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
-
-//模拟：xiaoming确定不想和小狗玩耍了，需要将其引用计数减1
-[dog release];
-NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
-
-//模拟：xiaohong不确定何时不想和小狗玩耍了，将其设置为自动释放
-[dog autorelease];
-NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
-
-//没人需要和小狗玩耍了，将其引用计数减1
-[dog release];
-
-NSLog(@&quot;释放池子&quot;);
-[pool release];
-
-//创建一个自动释放池
-@autoreleasepool {
+<h6>自动释放池怎样创建？</h6>
+<p>ObjC提供两种方法创建自动释放池：<br>
+方法一：使用NSAutoreleasePool来创建</p>
+<pre><code>     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc]init];
+     //这里写代码
+     [pool release];
+</code></pre>
+<p>方法二：使用@autoreleasepool创建</p>
+<pre><code>     @autoreleasepool {
+     //这里写代码
+     }
+</code></pre>
+<p>自动释放池创建后，就会成为活动的池子，释放池子后，池子将释放其所包含的所有对象。<br>
+以上两种方法推荐第一种，因为将内存交给ObjC管理更高效。</p>
+<h6>自动释放池什么时候创建？</h6>
+<p>app使用过程中，会定期自动生成和销毁自动释放池，一般是在程序事件处理之前创建，当然我们也可以自行创建自动释放池，来达到我们一些特定的目的。</p>
+<h6>自动释放池什么时候销毁？</h6>
+<p>自动释放池的销毁时间是确定的，一般是在程序事件处理之后释放，或者由我们自己手动释放。</p>
+<p>下面举例说明自动释放池的工作流程：<br>
+场景：现在xiaoming和xiaohong都想和小狗一起玩耍，但是他们的需求不一样，他们的玩耍时间不一样，流程如下</p>
+<pre><code>    //创建一个自动释放池
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     //模拟：宠物中心派出小狗
     Dog * dog = [[Dog alloc]init];
 
@@ -137,176 +142,289 @@ NSLog(@&quot;释放池子&quot;);
     [dog release];
 
     NSLog(@&quot;释放池子&quot;);
-}
-</code></pre><p>输出结果如下：</p>
-<pre><code>[34819:7801589] 初始引用计数为 1
-[34819:7801589] 小狗的引用计数为 2
-[34819:7801589] 小狗的引用计数为 3
-[34819:7801589] 小狗的引用计数为 2
-[34819:7801589] 小狗的引用计数为 2
-[34819:7801589] 释放池子
-[34819:7801589] 销毁Dog
-</code></pre><p>可以看到，当池子释放后，dog对象才被释放，因此在池子释放之前，xiaohong都可以尽情地和小狗玩耍。</p>
-<h6 id="使用自动释放池需要注意："><a href="#使用自动释放池需要注意：" class="headerlink" title="使用自动释放池需要注意："></a>使用自动释放池需要注意：</h6><p>1）自动释放池实质上只是在释放的时候給池中所有对象对象发送release消息，不保证对象一定会销毁，如果自动释放池向对象发送release消息后对象的引用计数仍大于1，对象就无法销毁。</p>
+    [pool release];
+
+    //创建一个自动释放池
+    @autoreleasepool {
+        //模拟：宠物中心派出小狗
+        Dog * dog = [[Dog alloc]init];
+
+        //模拟：xiaoming需要和小狗玩耍，需要将其引用计数加1
+        [dog retain];
+        NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
+
+        //模拟：xiaohong需要和小狗玩耍，需要将其引用计数加1
+        [dog retain];
+        NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
+
+        //模拟：xiaoming确定不想和小狗玩耍了，需要将其引用计数减1
+        [dog release];
+        NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
+
+        //模拟：xiaohong不确定何时不想和小狗玩耍了，将其设置为自动释放
+        [dog autorelease];
+        NSLog(@&quot;小狗的引用计数为 %ld&quot;,dog.retainCount);
+
+        //没人需要和小狗玩耍了，将其引用计数减1
+        [dog release];
+
+        NSLog(@&quot;释放池子&quot;);
+    }
+</code></pre>
+<p>输出结果如下：</p>
+<pre><code>     [34819:7801589] 初始引用计数为 1
+     [34819:7801589] 小狗的引用计数为 2
+     [34819:7801589] 小狗的引用计数为 3
+     [34819:7801589] 小狗的引用计数为 2
+     [34819:7801589] 小狗的引用计数为 2
+     [34819:7801589] 释放池子
+     [34819:7801589] 销毁Dog
+</code></pre>
+<p>可以看到，当池子释放后，dog对象才被释放，因此在池子释放之前，xiaohong都可以尽情地和小狗玩耍。</p>
+<h6>使用自动释放池需要注意：</h6>
+<p>1）自动释放池实质上只是在释放的时候給池中所有对象对象发送release消息，不保证对象一定会销毁，如果自动释放池向对象发送release消息后对象的引用计数仍大于1，对象就无法销毁。</p>
 <p>2）自动释放池中的对象会集中同一时间释放，如果操作需要生成的对象较多占用内存空间大，可以使用多个释放池来进行优化。比如在一个循环中需要创建大量的临时变量，可以创建内部的池子来降低内存占用峰值。</p>
 <p>3）autorelease不会改变对象的引用计数</p>
-<h6 id="自动释放池的常见问题："><a href="#自动释放池的常见问题：" class="headerlink" title="自动释放池的常见问题："></a>自动释放池的常见问题：</h6><p>在管理对象释放的问题上，自动帮助我们释放池节省了大量的时间，但是有时候它却未必会达到我们期望的效果，比如在一个循环事件中，如果循环次数较大或者事件处理占用内存较大，就会导致内存占用不断增长，可能会导致不希望看到的后果。<br>示例代码：</p>
-<pre><code>for (int i = 0; i &lt; 100000; i ++) {
-    NSString * log  = [NSString stringWithFormat:@&quot;%d&quot;, i];
-    NSLog(@&quot;%@&quot;, log);
-}
-</code></pre><p>前面讲过，自动释放池的释放时间是确定的，这个例子中自动释放池会在循环事件结束时释放，那问题来了：在这个十万次的循环中，每次都会生成一个字符串并打印，这些字符串对象都放在池子中并直到循环结束才会释放，因此在循环期间内存不增长。<br>这类问题的解决方案是在循环中创建新的自动释放池，多少个循环释放一次由我们自行决定。</p>
-<pre><code>for (int i = 0; i &lt; 100000; i ++) {
-    @autoreleasepool {
-        NSString * log  = [NSString stringWithFormat:@&quot;%d&quot;, i];
-        NSLog(@&quot;%@&quot;, log);
-    }
-}
-</code></pre><h3 id="3-iOS的内存管理规则"><a href="#3-iOS的内存管理规则" class="headerlink" title="3 iOS的内存管理规则"></a>3 iOS的内存管理规则</h3><h4 id="3-1-基本原则"><a href="#3-1-基本原则" class="headerlink" title="3.1 基本原则"></a>3.1 基本原则</h4><p>无规矩不成方圆，在iOS开发中也存在规则来约束开发者进行内存管理，总的来讲有三点：<br>1）当你通过new、alloc或copy方法创建一个对象时，它的引用计数为1，当不再使用该对象时，应该向对象发送release或者autorelease消息释放对象。<br>2）当你通过其他方法获得一个对象时，如果对象引用计数为1且被设置为autorelease，则不需要执行任何释放对象的操作；<br>3）如果你打算取得对象所有权，就需要保留对象并在操作完成之后释放，且必须保证retain和release的次数对等。</p>
+<h6>自动释放池的常见问题：</h6>
+<p>在管理对象释放的问题上，自动帮助我们释放池节省了大量的时间，但是有时候它却未必会达到我们期望的效果，比如在一个循环事件中，如果循环次数较大或者事件处理占用内存较大，就会导致内存占用不断增长，可能会导致不希望看到的后果。<br>
+示例代码：</p>
+<pre><code>     for (int i = 0; i &lt; 100000; i ++) {
+         NSString * log  = [NSString stringWithFormat:@&quot;%d&quot;, i];
+         NSLog(@&quot;%@&quot;, log);
+     }
+</code></pre>
+<p>前面讲过，自动释放池的释放时间是确定的，这个例子中自动释放池会在循环事件结束时释放，那问题来了：在这个十万次的循环中，每次都会生成一个字符串并打印，这些字符串对象都放在池子中并直到循环结束才会释放，因此在循环期间内存不增长。<br>
+这类问题的解决方案是在循环中创建新的自动释放池，多少个循环释放一次由我们自行决定。</p>
+<pre><code>     for (int i = 0; i &lt; 100000; i ++) {
+         @autoreleasepool {
+             NSString * log  = [NSString stringWithFormat:@&quot;%d&quot;, i];
+             NSLog(@&quot;%@&quot;, log);
+         }
+     }
+</code></pre>
+<h3>3 iOS的内存管理规则</h3>
+<h4>3.1 基本原则</h4>
+<p>无规矩不成方圆，在iOS开发中也存在规则来约束开发者进行内存管理，总的来讲有三点：<br>
+1）当你通过new、alloc或copy方法创建一个对象时，它的引用计数为1，当不再使用该对象时，应该向对象发送release或者autorelease消息释放对象。<br>
+2）当你通过其他方法获得一个对象时，如果对象引用计数为1且被设置为autorelease，则不需要执行任何释放对象的操作；<br>
+3）如果你打算取得对象所有权，就需要保留对象并在操作完成之后释放，且必须保证retain和release的次数对等。</p>
 <p>应用到文章开头的例子中，小朋友每申请一个小狗（生成对象），最后都要归还到宠物中心（释放对象），如果只申请而不归还（对象创建了没有释放），那宠物中心的小狗就会越来越少（可用内存越来越少），到最后一个小狗都没有了（内存被耗尽），其他小朋友就再也没有小狗可申请了（无资源可申请使用），因此，必须要遵守规则：申请必须归还（规则1），申请几个必须归还几个（规则3），如果小狗被设定归还时间则不用小朋友主动归还（规则2）。</p>
-<h6 id="有兴趣的读者可以思考："><a href="#有兴趣的读者可以思考：" class="headerlink" title="有兴趣的读者可以思考："></a>有兴趣的读者可以思考：</h6><p>以上原则可以总结成一句简洁的话，是什么呢？</p>
-<h4 id="3-2-ARC"><a href="#3-2-ARC" class="headerlink" title="3.2 ARC"></a>3.2 ARC</h4><p>在MRC时代，必须严格遵守以上规则，否则内存问题将成为恶魔一样的存在，然而来到ARC时代，事情似乎变得轻松了，不用再写无止尽的ratain和release似乎让开发变得轻松了，对初学者变得更友好。</p>
+<h6>有兴趣的读者可以思考：</h6>
+<p>以上原则可以总结成一句简洁的话，是什么呢？</p>
+<h4>3.2 ARC</h4>
+<p>在MRC时代，必须严格遵守以上规则，否则内存问题将成为恶魔一样的存在，然而来到ARC时代，事情似乎变得轻松了，不用再写无止尽的ratain和release似乎让开发变得轻松了，对初学者变得更友好。</p>
 <p>ObjC2.0引入了垃圾回收机制，然而由于垃圾回收机制会对移动设备产生某些不好的影响（例如由于垃圾清理造成的卡顿），iOS并不支持这个机制，苹果的解决方案就是ARC（自动引用计数）。</p>
 <p>iOS5以后，我们可以开启ARC模式，ARC可以理解成一位管家，这个管家会帮我们向对象发送retain和release语句，不再需要我们手动添加了，我们可以更舒心地创建或引用对象，简化内存管理步骤，节省大量的开发时间。</p>
 <p>实际上，ARC不是垃圾回收，也并不是不需要内存管理了，它是隐式的内存管理，编译器在编译的时候会在代码插入合适的ratain和release语句，相当于在背后帮我们完成了内存管理的工作。</p>
 <p>下面将自动释放池的例子转化成ARC来看看</p>
-<pre><code>@autoreleasepool {
+<pre><code>     @autoreleasepool {
 
-    Dog * dog = [[Dog alloc]init];
+         Dog * dog = [[Dog alloc]init];
 
-    [xiaoming playWithDog:dog];
+         [xiaoming playWithDog:dog];
 
-    [xiaohong playWithDog:dog];
+         [xiaohong playWithDog:dog];
 
-    NSLog(@&quot;释放池子&quot;);
-}
-</code></pre><p>怎么样，是不是简洁了很多，是不是很熟悉的感觉呢。</p>
-<p>注意：<br>1）如果你的工程历史比较久，可以将其从MRC转换成ARC，跟上时代的步伐更好地维护<br>2）如果你的工程引用了某些不支持ARC的库，可以在Build Phases的Compile Sources将对应的m文件的编译器参数配置为-fno-objc-arc<br>3）ARC能帮我们简化内存管理问题，但不代表它是万能的，还是有它不能处理的情况，这就需要我们自己手动处理，比如循环引用、非ObjC对象、Core Foundation中的malloc()或者free()等等</p>
-<h6 id="有兴趣的读者可以思考：-1"><a href="#有兴趣的读者可以思考：-1" class="headerlink" title="有兴趣的读者可以思考："></a>有兴趣的读者可以思考：</h6><p>MRC有什么缺点？ARC有什么局限性？请列举。</p>
-<h4 id="3-3-ARC的修饰符"><a href="#3-3-ARC的修饰符" class="headerlink" title="3.3 ARC的修饰符"></a>3.3 ARC的修饰符</h4><p>ARC提供四种修饰符，分别是<strong>strong,</strong>weak, <strong>autoreleasing,</strong>unsafe_unretained</p>
-<h6 id="strong：强引用，持有所指向对象的所有权，无修饰符情况下的默认值。如需强制释放，可置nil。"><a href="#strong：强引用，持有所指向对象的所有权，无修饰符情况下的默认值。如需强制释放，可置nil。" class="headerlink" title="__strong：强引用，持有所指向对象的所有权，无修饰符情况下的默认值。如需强制释放，可置nil。"></a>__strong：强引用，持有所指向对象的所有权，无修饰符情况下的默认值。如需强制释放，可置nil。</h6><p>比如我们常用的定时器</p>
+         NSLog(@&quot;释放池子&quot;);
+     }
+</code></pre>
+<p>怎么样，是不是简洁了很多，是不是很熟悉的感觉呢。</p>
+<p>注意：<br>
+1）如果你的工程历史比较久，可以将其从MRC转换成ARC，跟上时代的步伐更好地维护<br>
+2）如果你的工程引用了某些不支持ARC的库，可以在Build Phases的Compile Sources将对应的m文件的编译器参数配置为-fno-objc-arc<br>
+3）ARC能帮我们简化内存管理问题，但不代表它是万能的，还是有它不能处理的情况，这就需要我们自己手动处理，比如循环引用、非ObjC对象、Core Foundation中的malloc()或者free()等等</p>
+<h6>有兴趣的读者可以思考：</h6>
+<p>MRC有什么缺点？ARC有什么局限性？请列举。</p>
+<h4>3.3 ARC的修饰符</h4>
+<p>ARC提供四种修饰符，分别是**strong,**weak, **autoreleasing,**unsafe_unretained</p>
+<h6>__strong：强引用，持有所指向对象的所有权，无修饰符情况下的默认值。如需强制释放，可置nil。</h6>
+<p>比如我们常用的定时器</p>
 <pre><code>　　NSTimer * timer = [NSTimer timerWith...];
-</code></pre><p>相当于</p>
+</code></pre>
+<p>相当于</p>
 <pre><code>　　NSTimer * __strong timer = [NSTimer timerWith...];
-</code></pre><p>当不需要使用时，强制销毁定时器</p>
+</code></pre>
+<p>当不需要使用时，强制销毁定时器</p>
 <pre><code>　　[timer invalidate];
 　　timer = nil;
-</code></pre><h6 id="weak：弱引用，不持有所指向对象的所有权，引用指向的对象内存被回收之后，引用本身会置nil，避免野指针。"><a href="#weak：弱引用，不持有所指向对象的所有权，引用指向的对象内存被回收之后，引用本身会置nil，避免野指针。" class="headerlink" title="__weak：弱引用，不持有所指向对象的所有权，引用指向的对象内存被回收之后，引用本身会置nil，避免野指针。"></a>__weak：弱引用，不持有所指向对象的所有权，引用指向的对象内存被回收之后，引用本身会置nil，避免野指针。</h6><p>比如避免循环引用的弱引用声明：</p>
-<pre><code>__weak __typeof(self) weakSelf = self;
-</code></pre><h6 id="autoreleasing：自动释放对象的引用，一般用于传递参数"><a href="#autoreleasing：自动释放对象的引用，一般用于传递参数" class="headerlink" title="__autoreleasing：自动释放对象的引用，一般用于传递参数"></a>__autoreleasing：自动释放对象的引用，一般用于传递参数</h6><p>比如一个读取数据的方法</p>
-<pre><code>- (void)loadData:(NSError **)error;
-</code></pre><p>当你调用时会发现这样的提示</p>
-<pre><code>NSError * error;
-[dataTool loadData:(NSError *__autoreleasing *)]
-</code></pre><p>这是编译器自动帮我们插入以下代码</p>
-<pre><code>NSError * error;
-NSError * __autoreleasing tmpErr = error;
-[dataTool loadData:&amp;tmpErr];
-</code></pre><h6 id="unsafe-unretained：为兼容iOS5以下版本的产物，可以理解成MRC下的weak，现在基本用不到，这里不作描述。"><a href="#unsafe-unretained：为兼容iOS5以下版本的产物，可以理解成MRC下的weak，现在基本用不到，这里不作描述。" class="headerlink" title="__unsafe_unretained：为兼容iOS5以下版本的产物，可以理解成MRC下的weak，现在基本用不到，这里不作描述。"></a>__unsafe_unretained：为兼容iOS5以下版本的产物，可以理解成MRC下的weak，现在基本用不到，这里不作描述。</h6><h6 id="有兴趣的读者可以思考：-2"><a href="#有兴趣的读者可以思考：-2" class="headerlink" title="有兴趣的读者可以思考："></a>有兴趣的读者可以思考：</h6><p>1）<strong>strong NSTimer <em> timer 和 NSTimer </em> </strong>strong timer哪个写法是正确的, 为什么编译器不报错？<br>2）使用__autoreleasing可能会遇到哪些问题？</p>
-<h4 id="3-4-属性的内存管理"><a href="#3-4-属性的内存管理" class="headerlink" title="3.4 属性的内存管理"></a>3.4 属性的内存管理</h4><p>ObjC2.0引入了@property，提供成员变量访问方法、权限、环境、内存管理类型的声明，下面主要说明ARC中属性的内存管理。</p>
+</code></pre>
+<h6>__weak：弱引用，不持有所指向对象的所有权，引用指向的对象内存被回收之后，引用本身会置nil，避免野指针。</h6>
+<p>比如避免循环引用的弱引用声明：</p>
+<pre><code>     __weak __typeof(self) weakSelf = self;
+</code></pre>
+<h6>__autoreleasing：自动释放对象的引用，一般用于传递参数</h6>
+<p>比如一个读取数据的方法</p>
+<pre><code>     - (void)loadData:(NSError **)error;
+</code></pre>
+<p>当你调用时会发现这样的提示</p>
+<pre><code>     NSError * error;
+     [dataTool loadData:(NSError *__autoreleasing *)]
+</code></pre>
+<p>这是编译器自动帮我们插入以下代码</p>
+<pre><code>     NSError * error;
+     NSError * __autoreleasing tmpErr = error;
+     [dataTool loadData:&amp;tmpErr];
+</code></pre>
+<h6>__unsafe_unretained：为兼容iOS5以下版本的产物，可以理解成MRC下的weak，现在基本用不到，这里不作描述。</h6>
+<h6>有兴趣的读者可以思考：</h6>
+<p>1）__strong NSTimer * timer 和 NSTimer * __strong timer哪个写法是正确的, 为什么编译器不报错？<br>
+2）使用__autoreleasing可能会遇到哪些问题？</p>
+<h4>3.4 属性的内存管理</h4>
+<p>ObjC2.0引入了@property，提供成员变量访问方法、权限、环境、内存管理类型的声明，下面主要说明ARC中属性的内存管理。</p>
 <p>属性的参数分为三类，基本数据类型默认为(atomic,readwrite,assign)，对象类型默认为(atomic,readwrite,strong)，其中第三个参数就是该属性的内存管理方式修饰，修饰词可以是以下之一：</p>
-<h6 id="1）assign：直接赋值"><a href="#1）assign：直接赋值" class="headerlink" title="1）assign：直接赋值"></a>1）assign：直接赋值</h6><p>assign一般用来修饰基本数据类型</p>
-<pre><code>@property (nonatomic, assign) NSInteger count;
-</code></pre><p>当然也可以修饰ObjC对象，但是不推荐，因为被assign修饰的对象释放后，指针还是指向释放前的内存，在后续操作中可能会导致内存问题引发崩溃。</p>
-<h6 id="2）retain：release旧值，再retain新值（引用计数＋1）"><a href="#2）retain：release旧值，再retain新值（引用计数＋1）" class="headerlink" title="2）retain：release旧值，再retain新值（引用计数＋1）"></a>2）retain：release旧值，再retain新值（引用计数＋1）</h6><p>retain和strong一样，都用来修饰ObjC对象。<br>使用set方法赋值时，实质上是会先保留新值，再释放旧值，再设置新值，避免新旧值一样时导致对象被释放的的问题。</p>
+<h6>1）assign：直接赋值</h6>
+<p>assign一般用来修饰基本数据类型</p>
+<pre><code>     @property (nonatomic, assign) NSInteger count;
+</code></pre>
+<p>当然也可以修饰ObjC对象，但是不推荐，因为被assign修饰的对象释放后，指针还是指向释放前的内存，在后续操作中可能会导致内存问题引发崩溃。</p>
+<h6>2）retain：release旧值，再retain新值（引用计数＋1）</h6>
+<p>retain和strong一样，都用来修饰ObjC对象。<br>
+使用set方法赋值时，实质上是会先保留新值，再释放旧值，再设置新值，避免新旧值一样时导致对象被释放的的问题。</p>
 <p>MRC写法如下</p>
-<pre><code>- (void)setCount:(NSObject *)count {
-    [count retain];
-    [_count release];
-    _count = count;
-}
-</code></pre><p>ARC对应写法</p>
-<pre><code>- (void)setCount:(NSObject *)count {
-    _count = count;
-}
-</code></pre><h6 id="3）copy：release旧值，再copy新值（拷贝内容）"><a href="#3）copy：release旧值，再copy新值（拷贝内容）" class="headerlink" title="3）copy：release旧值，再copy新值（拷贝内容）"></a>3）copy：release旧值，再copy新值（拷贝内容）</h6><p>一般用来修饰String、Dict、Array等需要保护其封装性的对象，尤其是在其内容可变的情况下，因此会拷贝（深拷贝）一份内容給属性使用，避免可能造成的对源内容进行改动。</p>
-<p>使用set方法赋值时，实质上是会先拷贝新值，再释放旧值，再设置新值。<br>实际上，遵守NSCopying的对象都可以使用copy，当然，如果你确定是要共用同一份可变内容，你也可以使用strong或retain。</p>
-<pre><code>@property (nonatomic, copy) NSString * name;
-</code></pre><h6 id="4）weak：ARC新引入修饰词，可代替assign，比assign多增加一个特性（置nil，见上文）。"><a href="#4）weak：ARC新引入修饰词，可代替assign，比assign多增加一个特性（置nil，见上文）。" class="headerlink" title="4）weak：ARC新引入修饰词，可代替assign，比assign多增加一个特性（置nil，见上文）。"></a>4）weak：ARC新引入修饰词，可代替assign，比assign多增加一个特性（置nil，见上文）。</h6><p>weak和strong一样用来修饰ObjC对象。<br>使用set方法赋值时，实质上不保留新值，也不释放旧值，只设置新值。</p>
+<pre><code>     - (void)setCount:(NSObject *)count {
+         [count retain];
+         [_count release];
+         _count = count;
+     }
+</code></pre>
+<p>ARC对应写法</p>
+<pre><code>     - (void)setCount:(NSObject *)count {
+         _count = count;
+     }
+</code></pre>
+<h6>3）copy：release旧值，再copy新值（拷贝内容）</h6>
+<p>一般用来修饰String、Dict、Array等需要保护其封装性的对象，尤其是在其内容可变的情况下，因此会拷贝（深拷贝）一份内容給属性使用，避免可能造成的对源内容进行改动。</p>
+<p>使用set方法赋值时，实质上是会先拷贝新值，再释放旧值，再设置新值。<br>
+实际上，遵守NSCopying的对象都可以使用copy，当然，如果你确定是要共用同一份可变内容，你也可以使用strong或retain。</p>
+<pre><code>     @property (nonatomic, copy) NSString * name;
+</code></pre>
+<h6>4）weak：ARC新引入修饰词，可代替assign，比assign多增加一个特性（置nil，见上文）。</h6>
+<p>weak和strong一样用来修饰ObjC对象。<br>
+使用set方法赋值时，实质上不保留新值，也不释放旧值，只设置新值。</p>
 <p>比如常用的代理的声明</p>
-<pre><code>@property (weak) id&lt;MyDelegate&gt; delegate;
-</code></pre><p>Xib控件的引用</p>
-<pre><code>@property (weak, nonatomic) IBOutlet UIImageView *productImage;
-</code></pre><h6 id="5）strong：ARC新引入修饰词，可代替retain"><a href="#5）strong：ARC新引入修饰词，可代替retain" class="headerlink" title="5）strong：ARC新引入修饰词，可代替retain"></a>5）strong：ARC新引入修饰词，可代替retain</h6><p>可参照retain，这里不再作描述。</p>
-<h6 id="有兴趣的读者可以思考：-3"><a href="#有兴趣的读者可以思考：-3" class="headerlink" title="有兴趣的读者可以思考："></a>有兴趣的读者可以思考：</h6><p>1）各个属性修饰词和3.3中的修饰词的对应关系？<br>2）属性的本质是什么？</p>
-<h4 id="3-5-block的内存管理"><a href="#3-5-block的内存管理" class="headerlink" title="3.5 block的内存管理"></a>3.5 block的内存管理</h4><p>iOS中使用block必须自己管理内存，错误的内存管理将导致循环引用等内存泄漏问题，这里主要说明在ARC下block声明和使用的时候需要注意的两点：<br>1）如果你使用@property去声明一个block的时候，一般使用copy来进行修饰（当然也可以不写，编译器自动进行copy操作），尽量不要使用retain。</p>
-<pre><code>@property (nonatomic, copy) void(^block)(NSData * data);
-</code></pre><p>2）block会对内部使用的对象进行强引用，因此在使用的时候应该确定不会引起循环引用，当然保险的做法就是添加弱引用标记。</p>
-<pre><code>__weak typeof(self) weakSelf = self;
-</code></pre><h6 id="有兴趣的读者可以深入了解："><a href="#有兴趣的读者可以深入了解：" class="headerlink" title="有兴趣的读者可以深入了解："></a>有兴趣的读者可以深入了解：</h6><p>1、block的内部实现原理是什么？<br>2、从内存位置来看block有几种类型？它们的内存管理方式各是怎样的？<br>3、对于不同类型的外部变量，block的内存管理都是怎样的？</p>
-<h3 id="4-经典内存泄漏及其解决方案"><a href="#4-经典内存泄漏及其解决方案" class="headerlink" title="4 经典内存泄漏及其解决方案"></a>4 经典内存泄漏及其解决方案</h3><p>虽然ARC好处多多，然而也并无法避免内存泄漏问题，下面介绍在ARC中常见的内存泄漏。</p>
-<h4 id="4-1-僵尸对象和野指针"><a href="#4-1-僵尸对象和野指针" class="headerlink" title="4.1 僵尸对象和野指针"></a>4.1 僵尸对象和野指针</h4><h6 id="僵尸对象：内存已经被回收的对象。"><a href="#僵尸对象：内存已经被回收的对象。" class="headerlink" title="僵尸对象：内存已经被回收的对象。"></a>僵尸对象：内存已经被回收的对象。</h6><h6 id="野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。"><a href="#野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。" class="headerlink" title="野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。"></a>野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。</h6><p>野指针错误形式在Xcode中通常表现为：Thread 1：EXC_BAD_ACCESS，因为你访问了一块已经不属于你的内存。<br>例子代码：(没有出现错误的筒子多运行几遍，因为获取野指针指向的结果是不确定的)</p>
-<pre><code>Dog * dog = [[Dog alloc]init];
-NSLog(@&quot;before&quot;);
-NSLog(@&quot;%s&quot;,object_getClassName(dog));
-[dog release];
-NSLog(@&quot;after&quot;);
-NSLog(@&quot;%s&quot;,object_getClassName(dog));
-</code></pre><p>运行结果：</p>
-<pre><code>[15184:5811062] before
-[15184:5811062] Dog
-[15184:5811062] after
-(lldb)
-</code></pre><p>可以看到，当运行到第六行的时候崩溃了，并給出了EXC_BAD_ACCESS的提示。</p>
-<h6 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h6><p>对象已经被释放后，应将其指针置为空指针（没有指向任何对象的指针，给空指针发送消息不会报错）。</p>
-<p>然而在实际开发中实际遇到EXC_BAD_ACCESS错误时，往往很难定位到错误点，幸好Xcode提供方便的工具給我们来定位及分析错误。<br>1）在product－scheme－edit scheme－diagnostics中将enable zombie objects勾选上，下次再出现这样的错误就可以准确定位了。<br>运行结果：</p>
-<pre><code>[15169:5801945] before
-[15169:5801945] Dog
-[15169:5801945] after
-[15169:5801945] _NSZombie_Dog
-</code></pre><p>可以看到，当运行到第六行时并没有崩溃，并给出了<em>NSZombie</em>的提示。</p>
+<pre><code>     @property (weak) id&lt;MyDelegate&gt; delegate;
+</code></pre>
+<p>Xib控件的引用</p>
+<pre><code>     @property (weak, nonatomic) IBOutlet UIImageView *productImage;
+</code></pre>
+<h6>5）strong：ARC新引入修饰词，可代替retain</h6>
+<p>可参照retain，这里不再作描述。</p>
+<h6>有兴趣的读者可以思考：</h6>
+<p>1）各个属性修饰词和3.3中的修饰词的对应关系？<br>
+2）属性的本质是什么？</p>
+<h4>3.5 block的内存管理</h4>
+<p>iOS中使用block必须自己管理内存，错误的内存管理将导致循环引用等内存泄漏问题，这里主要说明在ARC下block声明和使用的时候需要注意的两点：<br>
+1）如果你使用@property去声明一个block的时候，一般使用copy来进行修饰（当然也可以不写，编译器自动进行copy操作），尽量不要使用retain。</p>
+<pre><code>     @property (nonatomic, copy) void(^block)(NSData * data);
+</code></pre>
+<p>2）block会对内部使用的对象进行强引用，因此在使用的时候应该确定不会引起循环引用，当然保险的做法就是添加弱引用标记。</p>
+<pre><code>     __weak typeof(self) weakSelf = self;
+</code></pre>
+<h6>有兴趣的读者可以深入了解：</h6>
+<p>1、block的内部实现原理是什么？<br>
+2、从内存位置来看block有几种类型？它们的内存管理方式各是怎样的？<br>
+3、对于不同类型的外部变量，block的内存管理都是怎样的？</p>
+<h3>4 经典内存泄漏及其解决方案</h3>
+<p>虽然ARC好处多多，然而也并无法避免内存泄漏问题，下面介绍在ARC中常见的内存泄漏。</p>
+<h4>4.1 僵尸对象和野指针</h4>
+<h6>僵尸对象：内存已经被回收的对象。</h6>
+<h6>野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。</h6>
+<p>野指针错误形式在Xcode中通常表现为：Thread 1：EXC_BAD_ACCESS，因为你访问了一块已经不属于你的内存。<br>
+例子代码：(没有出现错误的筒子多运行几遍，因为获取野指针指向的结果是不确定的)</p>
+<pre><code>     Dog * dog = [[Dog alloc]init];
+     NSLog(@&quot;before&quot;);
+     NSLog(@&quot;%s&quot;,object_getClassName(dog));
+     [dog release];
+     NSLog(@&quot;after&quot;);
+     NSLog(@&quot;%s&quot;,object_getClassName(dog));
+</code></pre>
+<p>运行结果：</p>
+<pre><code>     [15184:5811062] before
+     [15184:5811062] Dog
+     [15184:5811062] after
+     (lldb)
+</code></pre>
+<p>可以看到，当运行到第六行的时候崩溃了，并給出了EXC_BAD_ACCESS的提示。</p>
+<h6>解决方案：</h6>
+<p>对象已经被释放后，应将其指针置为空指针（没有指向任何对象的指针，给空指针发送消息不会报错）。</p>
+<p>然而在实际开发中实际遇到EXC_BAD_ACCESS错误时，往往很难定位到错误点，幸好Xcode提供方便的工具給我们来定位及分析错误。<br>
+1）在product－scheme－edit scheme－diagnostics中将enable zombie objects勾选上，下次再出现这样的错误就可以准确定位了。<br>
+运行结果：</p>
+<pre><code>     [15169:5801945] before
+     [15169:5801945] Dog
+     [15169:5801945] after
+     [15169:5801945] _NSZombie_Dog
+</code></pre>
+<p>可以看到，当运行到第六行时并没有崩溃，并给出了_NSZombie_的提示。</p>
 <p>2）在Xcode－open developer tool－Instruments打开工具集，选择Zombies工具可以对已安装的应用进行僵尸对象检测。</p>
-<h4 id="4-2-循环引用"><a href="#4-2-循环引用" class="headerlink" title="4.2 循环引用"></a>4.2 循环引用</h4><p>循环引用是ARC中最常出现的问题，对于可能引发循环引用的一些原因在前一篇文章<a href="http://www.jianshu.com/p/bcc0bcaadd6c" target="_blank" rel="external">iOS总结篇：影响控制器正常释放的常见问题</a>中有提及，大家可以看看。</p>
-<p>一般来讲循环引用也是可以使用工具来检测到的，分为两种：<br>1）在product－Analyze中使用静态分析来检测代码中可能存在循环引用的问题。</p>
+<h4>4.2 循环引用</h4>
+<p>循环引用是ARC中最常出现的问题，对于可能引发循环引用的一些原因在前一篇文章<a href="http://www.jianshu.com/p/bcc0bcaadd6c" target="_blank" rel="external">iOS总结篇：影响控制器正常释放的常见问题</a>中有提及，大家可以看看。</p>
+<p>一般来讲循环引用也是可以使用工具来检测到的，分为两种：<br>
+1）在product－Analyze中使用静态分析来检测代码中可能存在循环引用的问题。</p>
 <p>2）在Xcode－open developer tool－Instruments打开工具集，选择Leaks工具可以对已安装的应用进行内存泄漏检测，此工具能检测静态分析不会提示，但是到运行时才会出现的内存泄漏问题。</p>
 <p>Leaks工具虽然强大，但是它不能检测到block循环引用导致的内存泄漏，这种情况一般需要自行排查问题（考验你的基本功时候到了），傻瓜式的方案当然是重写对象的dealloc方法来监测对象是否正常释放，来确认没有形成循环引用。</p>
 <p>由于ARC中循环引用出现的几率相对较大，很多大神或者团队都提供了很多解决此问题的思路和方法，甚至开发了插件和类库来帮助开发者更好地检测问题，有兴趣的读者可以研究一下，是否好用，孰好孰坏就由读者自行评判了。</p>
-<h4 id="4-3-循环中对象占用内存大"><a href="#4-3-循环中对象占用内存大" class="headerlink" title="4.3 循环中对象占用内存大"></a>4.3 循环中对象占用内存大</h4><p>这个问题常见于循环次数较大，循环体生成的对象占用内存较大的情景。<br>例子代码：我需要10000个演员来打仗</p>
-<pre><code>for (int i = 0; i &lt; 10000; i ++) {
-    Person * soldier = [[Person alloc]init];
-    [soldier fight];
-}
-</code></pre><p>该循环内产生大量的临时对象，直至循环结束才释放，可能导致内存泄漏，解决方法和上文中提到的自动释放池常见问题类似：在循环中创建自己的autoReleasePool，及时释放占用内存大的临时变量，减少内存占用峰值。</p>
-<pre><code>for (int i = 0; i &lt; 10000; i ++) {
-    @autoreleasepool {
-        Person * soldier = [[Person alloc]init];
-        [soldier fight];
-    }
-}
-</code></pre><p>然而有时候autoReleasePool也不是万能的：<br>例子：假如有2000张图片，每张1M左右，现在需要获取所有图片的尺寸，你会怎么做？<br>如果这样做</p>
-<pre><code>for (int i = 0; i &lt; 2000; i ++) {
-    CGSize size = [UIImage imageNamed:[NSString stringWithFormat:@&quot;%d.jpg&quot;,i]].size;
-    //add size to array
-}
-</code></pre><p>用imageNamed方法加载图片占用Cache的内存，autoReleasePool也不能释放，对此问题需要另外的解决方法，当然保险的当然是双管齐下了</p>
-<pre><code>for (int i = 0; i &lt; 2000; i ++) {
-    @autoreleasepool {
-        CGSize size = [UIImage imageWithContentsOfFile:filePath].size;
-        //add siez to array
+<h4>4.3 循环中对象占用内存大</h4>
+<p>这个问题常见于循环次数较大，循环体生成的对象占用内存较大的情景。<br>
+例子代码：我需要10000个演员来打仗</p>
+<pre><code>     for (int i = 0; i &lt; 10000; i ++) {
+         Person * soldier = [[Person alloc]init];
+         [soldier fight];
      }
-}
-</code></pre><h4 id="4-4-无限循环"><a href="#4-4-无限循环" class="headerlink" title="4.4 无限循环"></a>4.4 无限循环</h4><p>这个是比4.3更极端的情况，无论你出于什么原因，当你启动了一个无限循环的时候，ARC会默认该方法用不会执行完毕，方法里面的对象就永不释放，内存无限上涨，导致内存泄漏。<br>例子：</p>
-<pre><code>NSLog(@&quot;start !&quot;);
-dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    BOOL isSucc = YES;
-    while (isSucc) {
-        [NSThread sleepForTimeInterval:1.0];
-        NSLog(@&quot;create an obj&quot;);
-    }
-});
-</code></pre><p>输出结果为</p>
-<pre><code>[7026:3555827] start !
-[7026:3556236] create an obj
-[7026:3556236] create an obj
-[7026:3556236] create an obj
-[7026:3556236] create an obj
-[7026:3555827] dealloc
-[7026:3556236] create an obj
-[7026:3556236] create an obj
-[7026:3556236] create an obj
-</code></pre><p>可以看到，当控制器释放后该循环还在继续。 </p>
-<h6 id="对于这类问题解决方案是什么呢？留给读者思考吧～"><a href="#对于这类问题解决方案是什么呢？留给读者思考吧～" class="headerlink" title="对于这类问题解决方案是什么呢？留给读者思考吧～ ^_^"></a>对于这类问题解决方案是什么呢？留给读者思考吧～ ^_^</h6><p>提示：解决方法有autoreleasepool、block、timer等等</p>
-<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>关于iOS内存管理的知识点很多，如果展开来讲，本文涉及的知识点都可以写成一篇长文，因此，本文只是做一个概述，试图起到抛砖引玉的作用，帮助iOS开发的初学者更快地理解内存管理。<br>关于第四点“经典内存泄漏及其解决方案”，将专门写一篇文章在本文的基础上详细介绍（图文并茂 ^_^），敬请期待。</p>
+</code></pre>
+<p>该循环内产生大量的临时对象，直至循环结束才释放，可能导致内存泄漏，解决方法和上文中提到的自动释放池常见问题类似：在循环中创建自己的autoReleasePool，及时释放占用内存大的临时变量，减少内存占用峰值。</p>
+<pre><code>     for (int i = 0; i &lt; 10000; i ++) {
+         @autoreleasepool {
+             Person * soldier = [[Person alloc]init];
+             [soldier fight];
+         }
+     }
+</code></pre>
+<p>然而有时候autoReleasePool也不是万能的：<br>
+例子：假如有2000张图片，每张1M左右，现在需要获取所有图片的尺寸，你会怎么做？<br>
+如果这样做</p>
+<pre><code>     for (int i = 0; i &lt; 2000; i ++) {
+         CGSize size = [UIImage imageNamed:[NSString stringWithFormat:@&quot;%d.jpg&quot;,i]].size;
+         //add size to array
+     }
+</code></pre>
+<p>用imageNamed方法加载图片占用Cache的内存，autoReleasePool也不能释放，对此问题需要另外的解决方法，当然保险的当然是双管齐下了</p>
+<pre><code>     for (int i = 0; i &lt; 2000; i ++) {
+         @autoreleasepool {
+             CGSize size = [UIImage imageWithContentsOfFile:filePath].size;
+             //add siez to array
+          }
+     }
+</code></pre>
+<h4>4.4 无限循环</h4>
+<p>这个是比4.3更极端的情况，无论你出于什么原因，当你启动了一个无限循环的时候，ARC会默认该方法用不会执行完毕，方法里面的对象就永不释放，内存无限上涨，导致内存泄漏。<br>
+例子：</p>
+<pre><code>     NSLog(@&quot;start !&quot;);
+     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+         BOOL isSucc = YES;
+         while (isSucc) {
+             [NSThread sleepForTimeInterval:1.0];
+             NSLog(@&quot;create an obj&quot;);
+         }
+     });
+</code></pre>
+<p>输出结果为</p>
+<pre><code>     [7026:3555827] start !
+     [7026:3556236] create an obj
+     [7026:3556236] create an obj
+     [7026:3556236] create an obj
+     [7026:3556236] create an obj
+     [7026:3555827] dealloc
+     [7026:3556236] create an obj
+     [7026:3556236] create an obj
+     [7026:3556236] create an obj
+</code></pre>
+<p>可以看到，当控制器释放后该循环还在继续。</p>
+<h6>对于这类问题解决方案是什么呢？留给读者思考吧～ ^_^</h6>
+<p>提示：解决方法有autoreleasepool、block、timer等等</p>
+<h3>后记</h3>
+<p>关于iOS内存管理的知识点很多，如果展开来讲，本文涉及的知识点都可以写成一篇长文，因此，本文只是做一个概述，试图起到抛砖引玉的作用，帮助iOS开发的初学者更快地理解内存管理。<br>
+关于第四点“经典内存泄漏及其解决方案”，将专门写一篇文章在本文的基础上详细介绍（图文并茂 ^_^），敬请期待。</p>
 
   </section>
 </article>
@@ -326,7 +444,8 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
   class="twitter-share-button"
   data-size="large"
   data-via="DrakeLeung"
-  href="https://twitter.com/intent/tweet?text= id="前言"><a href="#前"
+  href="https://twitter.com/intent/tweet?text=>前言</h3>
+<p>现在iOS开发已"
 >
   Tweet
 </a>
