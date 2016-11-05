@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Associative References | idooo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/about">about</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2016/11/05/Associative-References/">Associative References</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">十一月 05 2016</p>
+  </section>
+
+  <section class="article-entry">
+    <p><strong>关联引用（Associative References）</strong>：能够将某个对象作为value通过唯一的key与另一个对象进行关联，作为value的对象可以看作是另一对象的一部分。能够让开发者给使用category的类中添加自定义属性。</p>
+<p><strong>关联对象（associated object）</strong>：在runtime函数中作为关联值（associated value），例如将对象b作为关联对象（或关联值）与对象a以key值进行关联</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">NSObject a = [[NSObject alloc]init];</div><div class="line">NSObject b = [[NSObject alloc]init];</div><div class="line">objc_setAssociatedObject(a, key, b, OBJC_ASSOCIATION_ASSIGN);</div></pre></td></tr></table></figure>
+<h2 id="创建关联引用"><a href="#创建关联引用" class="headerlink" title="创建关联引用"></a>创建关联引用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">* 通过给定的key和关联策略，为给定对象创建一个关联value   </div><div class="line">* @param object 进行关联操作的源对象The source object for the assciation.</div><div class="line">* @param key 关联引用需要的key值.</div><div class="line">* @param value 与Key值关联的value，value为nil，可清除已存在的关联</div><div class="line">* @param policy关联策略</div><div class="line">**/</div><div class="line">void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy)</div></pre></td></tr></table></figure>
+<h2 id="获取关联对象"><a href="#获取关联对象" class="headerlink" title="获取关联对象"></a>获取关联对象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">* 按照给定对象和给定key返回关联的value</div><div class="line">* @param object 关联操作的源对象</div><div class="line">* @param key 关联操作的key.</div><div class="line">* @return 通过key与对象进行关联的value.</div><div class="line">*/</div><div class="line">id objc_getAssociatedObject(id object, const void *key)</div></pre></td></tr></table></figure>
+<h2 id="移除关联引用"><a href="#移除关联引用" class="headerlink" title="移除关联引用"></a>移除关联引用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">  /**</div><div class="line">   * 移除对象所有的关联引用</div><div class="line">   * @param object 具有关联引用的对象.</div><div class="line">   * @note 这个函数的目的是为了方便获取给定对象的没有任何关联引用原始状态。</div><div class="line">   * 不应该用这个函数移除某个value与对象的关联引用，因为这样也会移除这个对</div><div class="line">   * 象与其它对象的关联引用。通常,应使用objc_setAssociatedObject，传入</div><div class="line">   * nil的value来清除对象与某个已存在的value的关联引用</div><div class="line">   */</div><div class="line">   void objc_removeAssociatedObjects(id object)</div><div class="line">关联策略（objc_AssociationPolicy）</div><div class="line">typedef OBJC_ENUM(uintptr_t, objc_AssociationPolicy) &#123;</div><div class="line">    OBJC_ASSOCIATION_ASSIGN = 0,           /**&lt; 指定关联对象的弱引用 */</div><div class="line">    OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1, /**&lt; 指定关联对象的非原子性的强引用*/</div><div class="line">    OBJC_ASSOCIATION_COPY_NONATOMIC = 3,   /**&lt; 指定关联对象为copy类型并且非原子性*/</div><div class="line">    OBJC_ASSOCIATION_RETAIN = 01401,       /**&lt; 指定关联对象为原子性强引用*/</div><div class="line">    OBJC_ASSOCIATION_COPY = 01403          /**&lt; 指定关联对象为原子性的copy*/</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="关联引用的使用方式"><a href="#关联引用的使用方式" class="headerlink" title="关联引用的使用方式"></a>关联引用的使用方式</h2><p>添加私有成员变量</p>
+<p>给category添加公共属性</p>
+<p>为KVO创建关联的观察者对象：当在category中使用KVO时，推荐使用自定义的关联对象作为观察者，可以参考文章Objective-C Associated Objects</p>
+<p>示例：在category中添加属性<br>.h文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@interface NSObject (Custom) &#123;</div><div class="line">//    NSString *str0;        //使用category的类中不能添加成员变量</div><div class="line">&#125;</div><div class="line">@property (nonatomic, strong) NSString *str1;</div><div class="line">@end</div></pre></td></tr></table></figure>
+<p>.m文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#import &quot;NSObject+Custom.h&quot;</div><div class="line">#import &lt;objc/runtime.h&gt;</div><div class="line">@implementation NSObject (Custom)</div><div class="line">@dynamic str1;  //这里使用@dynamic告诉编译器在编译期间不要自动创建属性的存取方法，也可以不用写（因为可以对同名的方法进行override）</div><div class="line">//定义key值，一般为静态char类型，最简便的方式就是用SEL类型作为key值</div><div class="line">//static char key;</div><div class="line"></div><div class="line">- (void)setStr1:(NSString *)str1 &#123;</div><div class="line">//    objc_setAssociatedObject(self, &amp;key, str1, OBJC_ASSOCIATION_COPY_NONATOMIC);</div><div class="line">//用SEL代替static char的key</div><div class="line">    objc_setAssociatedObject(self, @selector(str1), str1,     OBJC_ASSOCIATION_COPY);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (NSString *)str1 &#123;</div><div class="line">//    return objc_getAssociatedObject(self, &amp;key);</div><div class="line">//用SEL类型代替static char的key</div><div class="line">    return objc_getAssociatedObject(self, @selector(str1));</div><div class="line">&#125;</div><div class="line">@end</div></pre></td></tr></table></figure>
+<h2 id="使用注意"><a href="#使用注意" class="headerlink" title="使用注意"></a>使用注意</h2><p>当在category中定义了与class同名的成员时，会category中的成员会覆盖class中的成员，这是因为getter方法会优先寻找category中的属性。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="http://ww2.sinaimg.cn/crop.0.0.0.0.1243/005zWjpngw1f92noxj39jj31ku1kwgzm" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> idooo </p>
+      <p class="subtitle"> To be a better Man </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=<strong>关联引用（Associa"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'http://yoursite.com/2016/11/05/Associative-References/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+</body>
+</html>
