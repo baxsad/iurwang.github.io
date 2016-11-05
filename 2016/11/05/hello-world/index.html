@@ -1,288 +1,44 @@
-<!doctype html>
-
-
-
-  
-
-
-<html class="theme-next mist use-motion">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-
-
-
-
-
-
-
-
-
+  <meta charset="utf-8">
+  <title>iOS 内存管理记录 | idooo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
   
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
-
-
-
-  
-  
-  
-  
-
-  
-    
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    
-    
-    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-  
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Hexo, NexT" />
-
-
-
-
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
-
-
-
-
-
-
-<meta name="description" content="前言现在iOS开发已经是arc甚至是swift的时代，但是内存管理仍是一个重点关注的问题，如果只知盲目开发而不知个中原理，踩坑就跳不出来了，理解好内存管理，能让我们写出更有质量的代码。
-内存管理是程序设计中很重要的一部分，程序在运行的过程中消耗内存，运行结束后释放占用的内存。如果程序运行时一直分配内存而不及时释放无用的内存，会造成这样的后果：程序占用的内存越来越大，直至内存消耗殚尽，程序因无内存可">
-<meta property="og:type" content="article">
-<meta property="og:title" content="iOS 内存管理记录">
-<meta property="og:url" content="http://yoursite.com/2016/11/05/hello-world/index.html">
-<meta property="og:site_name" content="idoo">
-<meta property="og:description" content="前言现在iOS开发已经是arc甚至是swift的时代，但是内存管理仍是一个重点关注的问题，如果只知盲目开发而不知个中原理，踩坑就跳不出来了，理解好内存管理，能让我们写出更有质量的代码。
-内存管理是程序设计中很重要的一部分，程序在运行的过程中消耗内存，运行结束后释放占用的内存。如果程序运行时一直分配内存而不及时释放无用的内存，会造成这样的后果：程序占用的内存越来越大，直至内存消耗殚尽，程序因无内存可">
-<meta property="og:updated_time" content="2016-11-05T12:08:55.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS 内存管理记录">
-<meta name="twitter:description" content="前言现在iOS开发已经是arc甚至是swift的时代，但是内存管理仍是一个重点关注的问题，如果只知盲目开发而不知个中原理，踩坑就跳不出来了，理解好内存管理，能让我们写出更有质量的代码。
-内存管理是程序设计中很重要的一部分，程序在运行的过程中消耗内存，运行结束后释放占用的内存。如果程序运行时一直分配内存而不及时释放无用的内存，会造成这样的后果：程序占用的内存越来越大，直至内存消耗殚尽，程序因无内存可">
-
-
-
-<script type="text/javascript" id="hexo.configuration">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    scheme: 'Mist',
-    sidebar: {"position":"left","display":"post"},
-    fancybox: true,
-    motion: true,
-    duoshuo: {
-      userId: '0',
-      author: 'Author'
-    }
-  };
-</script>
-
-
-
-
-  <link rel="canonical" href="http://yoursite.com/2016/11/05/hello-world/"/>
-
-
-  <title> iOS 内存管理记录 | idoo </title>
 </head>
 
-<body itemscope itemtype="//schema.org/WebPage" lang="">
-
-  
-
-
-
-
-
-
-
-
-
-
-  
+<body>
+  <nav class="app-nav">
   
     
+      <a href="/.">home</a>
+    
   
-
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
+    
+      <a href="/archives">archive</a>
+    
   
-
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">idoo</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-  <p class="site-subtitle"></p>
-</div>
-
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-            Startseite
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-            Archiv
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags" rel="section">
-            
-            Tags
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-schedule">
-          <a href="/schedule" rel="section">
-            
-            Schedule
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
+    
+      <a href="/atom.xml">rss</a>
+    
   
 </nav>
 
- </div>
-    </header>
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2016/11/05/hello-world/">iOS 内存管理记录</a>
+  </h1>
 
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
+  <section class="article-meta">
+    <p class="article-date">十一月 05 2016</p>
+  </section>
 
-  <div id="posts" class="posts-expand">
-    
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                iOS 内存管理记录
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Veröffentlicht am</span>
-            <time itemprop="dateCreated" datetime="2016-11-05T11:06:31+08:00" content="2016-11-05">
-              2016-11-05
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>现在iOS开发已经是arc甚至是swift的时代，但是内存管理仍是一个重点关注的问题，如果只知盲目开发而不知个中原理，踩坑就跳不出来了，理解好内存管理，能让我们写出更有质量的代码。</p>
+  <section class="article-entry">
+    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>现在iOS开发已经是arc甚至是swift的时代，但是内存管理仍是一个重点关注的问题，如果只知盲目开发而不知个中原理，踩坑就跳不出来了，理解好内存管理，能让我们写出更有质量的代码。</p>
 <p>内存管理是程序设计中很重要的一部分，程序在运行的过程中消耗内存，运行结束后释放占用的内存。如果程序运行时一直分配内存而不及时释放无用的内存，会造成这样的后果：程序占用的内存越来越大，直至内存消耗殚尽，程序因无内存可用导致崩溃，这样的情况我们称之为内存泄漏。</p>
 <p>ObjC的内存管理比较简洁，然而要深刻理解也不是一件易事，本文将介绍如何使用ObjC进行内存管理。</p>
 <a id="more"></a>
@@ -552,254 +308,78 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 <h6 id="对于这类问题解决方案是什么呢？留给读者思考吧～"><a href="#对于这类问题解决方案是什么呢？留给读者思考吧～" class="headerlink" title="对于这类问题解决方案是什么呢？留给读者思考吧～ ^_^"></a>对于这类问题解决方案是什么呢？留给读者思考吧～ ^_^</h6><p>提示：解决方法有autoreleasepool、block、timer等等</p>
 <h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>关于iOS内存管理的知识点很多，如果展开来讲，本文涉及的知识点都可以写成一篇长文，因此，本文只是做一个概述，试图起到抛砖引玉的作用，帮助iOS开发的初学者更快地理解内存管理。<br>关于第四点“经典内存泄漏及其解决方案”，将专门写一篇文章在本文的基础上详细介绍（图文并茂 ^_^），敬请期待。</p>
 
-      
-    </div>
+  </section>
+</article>
 
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="http://ww2.sinaimg.cn/crop.0.0.0.0.1243/005zWjpngw1f92noxj39jj31ku1kwgzm" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> idooo </p>
+      <p class="subtitle"> To be a better Man </p>
     <div>
-      
-        
+  </section>
 
-      
-    </div>
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text= id="前言"><a href="#前"
+>
+  Tweet
+</a>
 
-    <div>
-      
-        
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
 
-      
-    </div>
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
 
-    <footer class="post-footer">
-      
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
 
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
+  </section>
+</div>
 
 
-          
-  <div class="comments" id="comments">
+  
     
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
+</section>
 
-
-        </div>
-        
-          
+<script>
+  var disqus_shortname = 'drakeleung';
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Inhaltsverzeichnis
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            Übersicht
-          </li>
-        </ul>
-      
-
-      <section class="site-overview sidebar-panel ">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.gif"
-               alt="Sunako" />
-          <p class="site-author-name" itemprop="name">Sunako</p>
-          <p class="site-description motion-element" itemprop="description"></p>
-        </div>
-        <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">1</span>
-              <span class="site-state-item-name">Artikel</span>
-            </a>
-          </div>
-
-          
-
-          
-
-        </nav>
-
-        
-
-        <div class="links-of-author motion-element">
-          
-        </div>
-
-        
-        
-
-        
-        
-
-      </section>
-
-      
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-            
-              
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-引用计数"><span class="nav-number">2.</span> <span class="nav-text">1 引用计数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#在ObjC中，对象什么时候会被释放（或者对象占用的内存什么时候会被回收利用）？"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">在ObjC中，对象什么时候会被释放（或者对象占用的内存什么时候会被回收利用）？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#那怎么知道对象已经没有被引用了呢？"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">那怎么知道对象已经没有被引用了呢？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#与之对应的消息发送方法如下："><span class="nav-number">2.0.0.3.</span> <span class="nav-text">与之对应的消息发送方法如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面通过一个简单的例子来说明："><span class="nav-number">2.0.0.4.</span> <span class="nav-text">下面通过一个简单的例子来说明：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#思考几个问题："><span class="nav-number">2.0.0.5.</span> <span class="nav-text">思考几个问题：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-自动释放池"><span class="nav-number">3.</span> <span class="nav-text">2 自动释放池</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#那autorelease的原理是什么呢？"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">那autorelease的原理是什么呢？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#自动释放池怎样创建？"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">自动释放池怎样创建？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#自动释放池什么时候创建？"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">自动释放池什么时候创建？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#自动释放池什么时候销毁？"><span class="nav-number">3.0.0.4.</span> <span class="nav-text">自动释放池什么时候销毁？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用自动释放池需要注意："><span class="nav-number">3.0.0.5.</span> <span class="nav-text">使用自动释放池需要注意：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#自动释放池的常见问题："><span class="nav-number">3.0.0.6.</span> <span class="nav-text">自动释放池的常见问题：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-iOS的内存管理规则"><span class="nav-number">4.</span> <span class="nav-text">3 iOS的内存管理规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-基本原则"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 基本原则</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#有兴趣的读者可以思考："><span class="nav-number">4.1.0.1.</span> <span class="nav-text">有兴趣的读者可以思考：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-ARC"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 ARC</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#有兴趣的读者可以思考：-1"><span class="nav-number">4.2.0.1.</span> <span class="nav-text">有兴趣的读者可以思考：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-ARC的修饰符"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 ARC的修饰符</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#strong：强引用，持有所指向对象的所有权，无修饰符情况下的默认值。如需强制释放，可置nil。"><span class="nav-number">4.3.0.1.</span> <span class="nav-text">__strong：强引用，持有所指向对象的所有权，无修饰符情况下的默认值。如需强制释放，可置nil。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#weak：弱引用，不持有所指向对象的所有权，引用指向的对象内存被回收之后，引用本身会置nil，避免野指针。"><span class="nav-number">4.3.0.2.</span> <span class="nav-text">__weak：弱引用，不持有所指向对象的所有权，引用指向的对象内存被回收之后，引用本身会置nil，避免野指针。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#autoreleasing：自动释放对象的引用，一般用于传递参数"><span class="nav-number">4.3.0.3.</span> <span class="nav-text">__autoreleasing：自动释放对象的引用，一般用于传递参数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#unsafe-unretained：为兼容iOS5以下版本的产物，可以理解成MRC下的weak，现在基本用不到，这里不作描述。"><span class="nav-number">4.3.0.4.</span> <span class="nav-text">__unsafe_unretained：为兼容iOS5以下版本的产物，可以理解成MRC下的weak，现在基本用不到，这里不作描述。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#有兴趣的读者可以思考：-2"><span class="nav-number">4.3.0.5.</span> <span class="nav-text">有兴趣的读者可以思考：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-属性的内存管理"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 属性的内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1）assign：直接赋值"><span class="nav-number">4.4.0.1.</span> <span class="nav-text">1）assign：直接赋值</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2）retain：release旧值，再retain新值（引用计数＋1）"><span class="nav-number">4.4.0.2.</span> <span class="nav-text">2）retain：release旧值，再retain新值（引用计数＋1）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3）copy：release旧值，再copy新值（拷贝内容）"><span class="nav-number">4.4.0.3.</span> <span class="nav-text">3）copy：release旧值，再copy新值（拷贝内容）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4）weak：ARC新引入修饰词，可代替assign，比assign多增加一个特性（置nil，见上文）。"><span class="nav-number">4.4.0.4.</span> <span class="nav-text">4）weak：ARC新引入修饰词，可代替assign，比assign多增加一个特性（置nil，见上文）。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5）strong：ARC新引入修饰词，可代替retain"><span class="nav-number">4.4.0.5.</span> <span class="nav-text">5）strong：ARC新引入修饰词，可代替retain</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#有兴趣的读者可以思考：-3"><span class="nav-number">4.4.0.6.</span> <span class="nav-text">有兴趣的读者可以思考：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-block的内存管理"><span class="nav-number">4.5.</span> <span class="nav-text">3.5 block的内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#有兴趣的读者可以深入了解："><span class="nav-number">4.5.0.1.</span> <span class="nav-text">有兴趣的读者可以深入了解：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-经典内存泄漏及其解决方案"><span class="nav-number">5.</span> <span class="nav-text">4 经典内存泄漏及其解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-僵尸对象和野指针"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 僵尸对象和野指针</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#僵尸对象：内存已经被回收的对象。"><span class="nav-number">5.1.0.1.</span> <span class="nav-text">僵尸对象：内存已经被回收的对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。"><span class="nav-number">5.1.0.2.</span> <span class="nav-text">野指针：指向僵尸对象的指针，向野指针发送消息会导致崩溃。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#解决方案："><span class="nav-number">5.1.0.3.</span> <span class="nav-text">解决方案：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-循环引用"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 循环引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-循环中对象占用内存大"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 循环中对象占用内存大</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-无限循环"><span class="nav-number">5.4.</span> <span class="nav-text">4.4 无限循环</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#对于这类问题解决方案是什么呢？留给读者思考吧～"><span class="nav-number">5.4.0.1.</span> <span class="nav-text">对于这类问题解决方案是什么呢？留给读者思考吧～ ^_^</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后记"><span class="nav-number">6.</span> <span class="nav-text">后记</span></a></li></ol></div>
-            
-          </div>
-        </section>
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
+  var disqus_url = 'http://yoursite.com/2016/11/05/hello-world/';
   
-  &copy; 
-  <span itemprop="copyrightYear">2016</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Sunako</span>
-</div>
-
-<div class="powered-by">
-  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
-</div>
-
-<div class="theme-info">
-  Theme -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
-  </a>
-</div>
-
-        
-
-        
-      </div>
-    </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
-    </div>
-  </div>
-
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
 </script>
 
 
-
-
-
-
-
-
-
   
-
-
-
-  
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-
-  
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
-
-
-
-  
-  
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
-
-
-
-  
-
-
-
-  
-
-
-
-
-  
-  
-
-  
-
-  
-
-  
-
-  
-
+</main>
 
 </body>
 </html>
