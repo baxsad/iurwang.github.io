@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>idooo</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2016-11-06T06:48:29.000Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Sunako</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>多事之秋</title>
+    <link href="http://yoursite.com/2016/11/06/%E5%A4%9A%E4%BA%8B%E4%B9%8B%E7%A7%8B/"/>
+    <id>http://yoursite.com/2016/11/06/多事之秋/</id>
+    <published>2016-11-06T06:46:54.000Z</published>
+    <updated>2016-11-06T06:48:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>深深陷入黑暗的蜡烛<br>在知识的页岩中寻找标本<br>鱼贯的文字交尾后<br>和文明一起沉睡到天明<br>惯性的轮子，禁欲的雪人<br>大地棋盘上的残局<br>已搁置了多年<br>一个逃避规则的男孩<br>越过界河去送信<br><a id="more"></a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;深深陷入黑暗的蜡烛&lt;br&gt;在知识的页岩中寻找标本&lt;br&gt;鱼贯的文字交尾后&lt;br&gt;和文明一起沉睡到天明&lt;br&gt;惯性的轮子，禁欲的雪人&lt;br&gt;大地棋盘上的残局&lt;br&gt;已搁置了多年&lt;br&gt;一个逃避规则的男孩&lt;br&gt;越过界河去送信&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="北岛" scheme="http://yoursite.com/tags/%E5%8C%97%E5%B2%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>回答</title>
+    <link href="http://yoursite.com/2016/11/06/%E5%9B%9E%E7%AD%94/"/>
+    <id>http://yoursite.com/2016/11/06/回答/</id>
+    <published>2016-11-06T06:37:17.000Z</published>
+    <updated>2016-11-06T06:37:51.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>卑鄙是卑鄙者的通行证，<br>高尚是高尚者的墓志铭，<br>看吧，在那镀金的天空中，<br>飘满了死者弯曲的倒影。<a id="more"></a></p>
+<p>冰川纪过去了，<br>为什么到处都是冰凌？<br>好望角发现了，<br>为什么死海里千帆相竞？</p>
+<p>我来到这个世界上，<br>只带着纸、绳索和身影，<br>为了在审判前，<br>宣读那些被判决的声音。</p>
+<p>告诉你吧，世界<br>我–不–相–信！<br>纵使你脚下有一千名挑战者，<br>那就把我算作第一千零一名。</p>
+<p>我不相信天是蓝的，<br>我不相信雷有回声，<br>我不相信梦是假的，<br>我不相信死无报应。</p>
+<p>如果海洋注定要决堤，<br>就让所有的苦水都注入我心中，<br>如果陆地注定要上升，<br>就让人类重新选择生存的峰顶。</p>
+<p>新的转机和闪闪星斗，<br>正在缀满没有遮拦的天空。<br>那是五千年的象形文字，<br>那是未来人们凝视的眼睛。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;卑鄙是卑鄙者的通行证，&lt;br&gt;高尚是高尚者的墓志铭，&lt;br&gt;看吧，在那镀金的天空中，&lt;br&gt;飘满了死者弯曲的倒影。
+    
+    </summary>
+    
+    
+      <category term="北岛" scheme="http://yoursite.com/tags/%E5%8C%97%E5%B2%9B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>走吧</title>
+    <link href="http://yoursite.com/2016/11/06/%E8%B5%B0%E5%90%A7/"/>
+    <id>http://yoursite.com/2016/11/06/走吧/</id>
+    <published>2016-11-06T06:32:20.000Z</published>
+    <updated>2016-11-06T06:47:11.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>走吧，<br>落叶吹进深谷，<br>歌声却没有归宿。<a id="more"></a></p>
+<p>走吧，<br>冰上的月光，<br>已从河面上溢出。</p>
+<p>走吧，<br>眼睛望着同一片天空，<br>心敲击着暮色的鼓。</p>
+<p>走吧，<br>我们没有失去记忆，<br>我们去寻找生命的湖。</p>
+<p>走吧，<br>路呵路，<br>飘满了红罂粟。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;走吧，&lt;br&gt;落叶吹进深谷，&lt;br&gt;歌声却没有归宿。
+    
+    </summary>
+    
+    
+      <category term="北岛" scheme="http://yoursite.com/tags/%E5%8C%97%E5%B2%9B/"/>
+    
+  </entry>
+  
+</feed>
