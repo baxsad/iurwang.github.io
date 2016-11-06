@@ -159,6 +159,7 @@ a.nav-back {
   font-size: 37px;
   color: rgba(0,0,0,0.5);
   z-index: 99;
+  padding: 0px;
 }
 a.nav-back:hover,
 a.nav-back:focus {
